@@ -65,3 +65,47 @@ button { font-family:inherit; cursor:pointer; border:none; background:none; }
   60%{clip-path:inset(40% 0 40% 0);transform:translate(-2px,1px)}
   80%{clip-path:inset(80% 0 5% 0);transform:translate(2px,-1px)}
 }
+
+/* ─── Mobile Responsive ───────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Sections padding */
+  section { padding-left: 20px !important; padding-right: 20px !important; }
+
+  /* Activity grid */
+  #activity > div > div:last-child > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Skills grid */
+  #skills > div > div:last-child > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Repos grid — full width cards */
+  #repos .repos-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Contact padding */
+  #contact { padding: 60px 20px !important; }
+
+  /* Footer */
+  footer { padding: 32px 20px !important; }
+
+  /* AIChat widget */
+  div[style*="bottom: 92px"] {
+    width: calc(100vw - 32px) !important;
+    right: 16px !important;
+    left: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hero badge text smaller */
+  section#hero { padding-top: 100px !important; }
+
+  /* Stat numbers tighter */
+  section#hero > div > div[style*="gap"] {
+    gap: 12px !important;
+  }
+}
