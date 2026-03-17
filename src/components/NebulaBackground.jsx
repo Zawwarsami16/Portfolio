@@ -114,11 +114,11 @@ export default function NebulaBackground() {
         const hb=Math.sin(time*7.54)*0.5+0.5
         const dW=W*(1+hb*0.012), dH=H*(1+hb*0.012)
         ctx.save()
-        ctx.globalAlpha=0.40+hb*0.20
-        ctx.drawImage(state.nebula,(W-dW)/2+(state.mx-0.5)*16,(H-dH)/2+(state.my-0.5)*10,dW,dH)
+        ctx.globalAlpha=0.52+hb*0.22
+        ctx.filter="contrast(1.15) saturate(1.3) brightness(1.1)"; ctx.drawImage(state.nebula,(W-dW)/2+(state.mx-0.5)*16,(H-dH)/2+(state.my-0.5)*10,dW,dH); ctx.filter="none"
         ctx.restore()
         const gr=ctx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.4,W*.5)
-        gr.addColorStop(0,`rgba(120,0,0,${0.03+hb*0.08})`); gr.addColorStop(1,'rgba(0,0,0,0)')
+        gr.addColorStop(0,`rgba(120,0,0,${0.05+hb*0.12})`); gr.addColorStop(1,'rgba(0,0,0,0)')
         ctx.fillStyle=gr; ctx.fillRect(0,0,W,H)
       }
 
