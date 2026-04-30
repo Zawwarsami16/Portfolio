@@ -1,61 +1,177 @@
-import { useGitHub }       from './hooks/useGitHub.js'
-import NebulaBackground    from './components/NebulaBackground.jsx'
-import Petals              from './components/Petals.jsx'
-import Nav                 from './components/Nav.jsx'
-import Hero                from './components/Hero.jsx'
-import About               from './components/About.jsx'
-import Repos               from './components/Repos.jsx'
-import Activity            from './components/Activity.jsx'
-import Skills              from './components/Skills.jsx'
-import Contact             from './components/Contact.jsx'
-import AIChat              from './components/AIChat.jsx'
-import AnimatedSection     from './components/AnimatedSection.jsx'
+const systems = [
+  {
+    name: 'Anteroom Oracle',
+    type: 'Flagship Intelligence Terminal',
+    description: 'Macro and geopolitical research terminal combining market data, world-event signals, historical parallels, scenario summaries, and risk context.',
+    stack: ['Python', 'Market Data', 'Geo Risk', 'Terminal UI'],
+    repo: 'https://github.com/anteroom-studio/anteroom-oracle',
+  },
+  {
+    name: 'Anteroom Crypto Terminal',
+    type: 'Live Market Interface',
+    description: 'Institutional-style crypto terminal for structure, liquidity, execution quality, market scans, liquidation pressure, and analyst reads.',
+    stack: ['React', 'Vite', 'Live Data', 'GitHub Pages'],
+    repo: 'https://github.com/anteroom-studio/Anteroom-Crypto-Terminal',
+    live: 'https://anteroom-studio.github.io/Anteroom-Crypto-Terminal/',
+  },
+  {
+    name: 'Anteroom World Model',
+    type: 'Research Engine',
+    description: 'Historical macro research system for cross-asset relationships, lead-lag behavior, stress-period comparison, and scenario analysis.',
+    stack: ['Python', 'Macro Data', 'Correlation', 'Research'],
+    repo: 'https://github.com/anteroom-studio/anteroom-world-model',
+  },
+  {
+    name: 'Anteroom Data Model',
+    type: 'Intelligence Core',
+    description: 'Multi-source market and event intelligence system with local model support, news monitoring, hardware-aware execution, and terminal review.',
+    stack: ['Python', 'RSS', 'Local LLM', 'Market Data'],
+    repo: 'https://github.com/anteroom-studio/anteroom-data-model-2',
+  },
+  {
+    name: 'Restaurant Intelligence',
+    type: 'Operations System',
+    description: 'Private multi-location restaurant operations dashboard for inventory movement, daily sales, delivery tracking, and role-based workflows.',
+    stack: ['React', 'Supabase', 'Inventory', 'Internal Tool'],
+  },
+  {
+    name: 'Heritage Shawarma Website',
+    type: 'Client Website',
+    description: 'Responsive restaurant website for Heritage Shawarma in Oshawa, built for menu discovery, local SEO, brand presence, and customer clarity.',
+    stack: ['React', 'Vite', 'SEO', 'Client Work'],
+  },
+]
 
-function Divider() {
+const principles = [
+  'Build systems that feel useful before they feel impressive.',
+  'Design interfaces with the density of tools and the clarity of products.',
+  'Treat research output as signal context, not guaranteed prediction.',
+  'Ship prototypes, then refine them into credible studio assets.',
+]
+
+const stats = [
+  ['Studio', 'Anteroom'],
+  ['Focus', 'Intelligence Systems'],
+  ['Stack', 'Python · React · Vite'],
+  ['Base', 'Toronto / Oshawa'],
+]
+
+function Badge({ children }) {
+  return <span className="badge">{children}</span>
+}
+
+function ProjectCard({ project, index }) {
   return (
-    <div className="zai-divider" style={{maxWidth:'1100px',margin:'0 auto',padding:'0 24px'}}>
-      <div style={{height:'1px',background:'linear-gradient(90deg,transparent,rgba(255,45,78,0.22),rgba(255,100,50,0.12),transparent)',position:'relative'}}>
-        <div style={{position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%)',width:'4px',height:'4px',borderRadius:'50%',background:'var(--rose)',boxShadow:'0 0 8px var(--rose)'}}/>
+    <article className="project-card">
+      <div className="project-index">0{index + 1}</div>
+      <div>
+        <p className="eyebrow">{project.type}</p>
+        <h3>{project.name}</h3>
+        <p className="project-copy">{project.description}</p>
+        <div className="stack-row">
+          {project.stack.map(item => <Badge key={item}>{item}</Badge>)}
+        </div>
+        <div className="project-links">
+          {project.repo && <a href={project.repo} target="_blank" rel="noreferrer">Repository</a>}
+          {project.live && <a href={project.live} target="_blank" rel="noreferrer">Live</a>}
+        </div>
       </div>
-    </div>
+    </article>
   )
 }
 
 export default function App() {
-  const {user,repos,events,loading,totalStars,totalForks,ghUser} = useGitHub()
   return (
-    <div style={{position:'relative',minHeight:'100vh',background:'var(--black)'}}>
-      {/* z:0 — nebula + stars + ZAI explosion */}
-      <NebulaBackground/>
-      {/* z:50 — petals in FRONT of everything */}
-      <Petals/>
-      {/* z:1 — content */}
-      <div style={{position:'relative',zIndex:1}}>
-        <Nav ghUser={ghUser}/>
-        {loading ? (
-          <div style={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'20px'}}>
-            <div style={{fontFamily:'var(--font-display)',fontSize:'clamp(50px,12vw,110px)',fontWeight:300,letterSpacing:'12px',color:'var(--rose)',animation:'pulse 2s ease-in-out infinite',textShadow:'0 0 40px rgba(255,45,78,0.5)'}}>ZAI</div>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:'10px',letterSpacing:'4px',color:'var(--text4)',textTransform:'uppercase'}}>initializing…</div>
-            <div style={{width:'100px',height:'1px',background:'rgba(255,255,255,0.05)',overflow:'hidden'}}>
-              <div style={{height:'100%',background:'linear-gradient(90deg,var(--rose),var(--gold))',animation:'loadbar 1.5s ease-in-out infinite'}}/>
-            </div>
+    <main className="site-shell">
+      <nav className="nav">
+        <a className="brand" href="#top" aria-label="Zawwar Sami home">
+          <span className="brand-mark">A</span>
+          <span>
+            <strong>Zawwar Sami</strong>
+            <small>Systems Portfolio</small>
+          </span>
+        </a>
+        <div className="nav-links">
+          <a href="#systems">Systems</a>
+          <a href="#studio">Studio</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+
+      <section id="top" className="hero section-grid">
+        <div className="hero-copy">
+          <p className="eyebrow">Founder-minded builder · Anteroom Studio</p>
+          <h1>Building intelligence systems, market terminals, and operational software with serious product discipline.</h1>
+          <p className="lede">
+            I design and build research tools, live dashboards, internal systems, and client-facing web experiences. My work sits between software engineering, interface design, market intelligence, and practical operations.
+          </p>
+          <div className="hero-actions">
+            <a className="button primary" href="#systems">View Systems</a>
+            <a className="button" href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">GitHub</a>
+            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom Studio</a>
           </div>
-        ) : (
-          <>
-            <Hero user={user} totalStars={totalStars} totalForks={totalForks} ghUser={ghUser}/>
-            <Divider/><About user={user} ghUser={ghUser}/>
-            <Divider/><Repos repos={repos} ghUser={ghUser}/>
-            <Divider/><Activity events={events} repos={repos} ghUser={ghUser}/>
-            <Divider/><Skills repos={repos}/>
-            <Divider/>
-            <AnimatedSection direction="up"><Contact user={user} ghUser={ghUser}/></AnimatedSection>
-            <footer style={{textAlign:'center',padding:'40px 24px',fontFamily:'var(--font-mono)',fontSize:'9px',letterSpacing:'3px',color:'var(--text4)',borderTop:'1px solid rgba(255,45,78,0.06)',marginTop:'40px'}}>
-              <span style={{color:'var(--rose)'}}>ZAI</span>{' · '}{ghUser}{' · '}<span style={{fontStyle:'italic'}}>typeof self === "undefined"</span>{' · '}still wandering
-            </footer>
-          </>
-        )}
-        <AIChat user={user} repos={repos} ghUser={ghUser}/>
-      </div>
-    </div>
+        </div>
+        <aside className="hero-panel">
+          <div className="terminal-topline">
+            <span></span><span></span><span></span>
+          </div>
+          <p className="panel-label">Current Direction</p>
+          <h2>Anteroom Stack</h2>
+          <p>Macro research, crypto terminals, restaurant intelligence, and client websites — organized into one studio ecosystem.</p>
+          <div className="stat-grid">
+            {stats.map(([label, value]) => (
+              <div className="stat" key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
+        </aside>
+      </section>
+
+      <section id="systems" className="systems-section">
+        <div className="section-heading">
+          <p className="eyebrow">Selected Work</p>
+          <h2>Systems that form the Anteroom ecosystem.</h2>
+          <p>Public research projects, live interfaces, private operational tools, and client work — presented as a coherent builder portfolio.</p>
+        </div>
+        <div className="project-grid">
+          {systems.map((project, index) => <ProjectCard key={project.name} project={project} index={index} />)}
+        </div>
+      </section>
+
+      <section id="studio" className="studio-section section-grid">
+        <div>
+          <p className="eyebrow">Design Philosophy</p>
+          <h2>From experiments to credible software assets.</h2>
+          <p className="lede compact">
+            The goal is not to make projects look louder. It is to make them feel more intentional: better naming, cleaner structure, safer configuration, sharper interfaces, and stronger positioning.
+          </p>
+        </div>
+        <div className="principles">
+          {principles.map((item, index) => (
+            <div className="principle" key={item}>
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <p>{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="contact" className="contact-section">
+        <p className="eyebrow">Contact</p>
+        <h2>Open to serious builds, systems work, and studio collaborations.</h2>
+        <div className="contact-links">
+          <a href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">Personal GitHub</a>
+          <a href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom Studio</a>
+          <a href="mailto:contact@anteroom.studio">contact@anteroom.studio</a>
+        </div>
+      </section>
+
+      <footer>
+        <span>ANTEROOM / Zawwar Sami</span>
+        <span>Systems · Interfaces · Intelligence</span>
+      </footer>
+    </main>
   )
 }
