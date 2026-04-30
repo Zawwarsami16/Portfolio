@@ -87,7 +87,7 @@ function SnakeTextCanvas() {
     let raf
     let particles = []
     const mouse = { x: 0, y: 0, active: false }
-    const snake = Array.from({ length: 34 }, () => ({ x: 0, y: 0 }))
+    const snake = Array.from({ length: 46 }, () => ({ x: 0, y: 0 }))
     const phrase = 'ZAWWAR SAMI  SYSTEMS  MOTION  MARKETS  RESTAURANTS  RESEARCH  INTERFACES  BEYOND ANTEROOM  '
 
     const resize = () => {
@@ -102,7 +102,7 @@ function SnakeTextCanvas() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       makeParticles()
       snake.forEach((node, i) => {
-        node.x = width * 0.5 - i * 12
+        node.x = width * 0.5 - i * 10
         node.y = height * 0.5
       })
     }
@@ -148,11 +148,11 @@ function SnakeTextCanvas() {
     const pointerLeave = () => { mouse.active = false }
 
     const drawSnake = time => {
-      const targetX = mouse.active ? mouse.x : width * 0.5 + Math.cos(time * 0.00055) * width * 0.28
-      const targetY = mouse.active ? mouse.y : height * 0.5 + Math.sin(time * 0.00072) * height * 0.24
+      const targetX = mouse.active ? mouse.x : width * 0.5 + Math.cos(time * 0.0005) * width * 0.30
+      const targetY = mouse.active ? mouse.y : height * 0.5 + Math.sin(time * 0.0007) * height * 0.25
 
-      snake[0].x += (targetX - snake[0].x) * 0.075
-      snake[0].y += (targetY - snake[0].y) * 0.075
+      snake[0].x += (targetX - snake[0].x) * 0.07
+      snake[0].y += (targetY - snake[0].y) * 0.07
 
       for (let i = 1; i < snake.length; i += 1) {
         const prev = snake[i - 1]
@@ -160,39 +160,95 @@ function SnakeTextCanvas() {
         const dx = prev.x - node.x
         const dy = prev.y - node.y
         const dist = Math.sqrt(dx * dx + dy * dy) || 1
-        const spacing = 13
-        node.x += (dx / dist) * (dist - spacing) * 0.42
-        node.y += (dy / dist) * (dist - spacing) * 0.42
+        const spacing = 11
+        node.x += (dx / dist) * (dist - spacing) * 0.48
+        node.y += (dy / dist) * (dist - spacing) * 0.48
       }
 
       ctx.save()
+      ctx.shadowBlur = 22
+      ctx.shadowColor = 'rgba(198,169,107,.36)'
       ctx.lineCap = 'round'
       ctx.lineJoin = 'round'
-      ctx.shadowBlur = 22
-      ctx.shadowColor = 'rgba(198,169,107,.35)'
-      for (let pass = 0; pass < 3; pass += 1) {
-        ctx.beginPath()
-        snake.forEach((node, i) => {
-          if (i === 0) ctx.moveTo(node.x, node.y)
-          else ctx.lineTo(node.x, node.y)
-        })
-        ctx.strokeStyle = pass === 0 ? 'rgba(198,169,107,.08)' : pass === 1 ? 'rgba(154,215,255,.12)' : 'rgba(230,232,236,.48)'
-        ctx.lineWidth = pass === 0 ? 24 : pass === 1 ? 12 : 3
-        ctx.stroke()
-      }
-      const head = snake[0]
-      ctx.shadowBlur = 18
-      ctx.fillStyle = 'rgba(198,169,107,.95)'
+
+      // Soft trail underneath
       ctx.beginPath()
-      ctx.arc(head.x, head.y, 6.5, 0, Math.PI * 2)
+      snake.forEach((node, i) => {
+        if (i === 0) ctx.moveTo(node.x, node.y)
+        else ctx.lineTo(node.x, node.y)
+      })
+      ctx.strokeStyle = 'rgba(198,169,107,.075)'
+      ctx.lineWidth = 32
+      ctx.stroke()
+
+      // Segmented body with tapering scales
+      for (let i = snake.length - 1; i >= 0; i -= 1) {
+        const node = snake[i]
+        const next = snake[Math.max(i - 1, 0)]
+        const angle = Math.atan2(next.y - node.y, next.x - node.x)
+        const taper = 1 - i / snake.length
+        const wave = Math.sin(time * 0.006 + i * 0.65) * 2.2
+        const bodyW = 4 + taper * 15
+        const bodyH = 3 + taper * 9
+
+        ctx.save()
+        ctx.translate(node.x, node.y + wave)
+        ctx.rotate(angle)
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(198,169,107,.58)' : 'rgba(230,232,236,.42)'
+        ctx.strokeStyle = 'rgba(4,6,10,.45)'
+        ctx.lineWidth = 0.8
+        ctx.beginPath()
+        ctx.ellipse(0, 0, bodyW, bodyH, 0, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.stroke()
+
+        if (i % 4 === 0 && i > 2) {
+          ctx.fillStyle = 'rgba(154,215,255,.20)'
+          ctx.beginPath()
+          ctx.arc(-bodyW * 0.15, -bodyH * 0.25, Math.max(1, bodyH * 0.22), 0, Math.PI * 2)
+          ctx.fill()
+        }
+        ctx.restore()
+      }
+
+      // Head, eyes, tongue
+      const head = snake[0]
+      const neck = snake[1]
+      const headAngle = Math.atan2(head.y - neck.y, head.x - neck.x)
+      ctx.save()
+      ctx.translate(head.x, head.y)
+      ctx.rotate(headAngle)
+      ctx.shadowBlur = 18
+      ctx.shadowColor = 'rgba(198,169,107,.45)'
+      ctx.fillStyle = 'rgba(198,169,107,.96)'
+      ctx.strokeStyle = 'rgba(255,255,255,.22)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.ellipse(0, 0, 18, 12, 0, 0, Math.PI * 2)
       ctx.fill()
+      ctx.stroke()
+
+      ctx.fillStyle = '#05070c'
+      ctx.beginPath(); ctx.arc(6, -4, 2.4, 0, Math.PI * 2); ctx.fill()
+      ctx.beginPath(); ctx.arc(6, 4, 2.4, 0, Math.PI * 2); ctx.fill()
+
+      const flick = Math.sin(time * 0.018) * 5
+      ctx.strokeStyle = 'rgba(232,131,147,.92)'
+      ctx.lineWidth = 1.4
+      ctx.beginPath()
+      ctx.moveTo(16, 0)
+      ctx.lineTo(28 + flick, -5)
+      ctx.moveTo(16, 0)
+      ctx.lineTo(28 + flick, 5)
+      ctx.stroke()
+      ctx.restore()
+
       ctx.restore()
     }
 
     const tick = time => {
       ctx.clearRect(0, 0, width, height)
       ctx.globalCompositeOperation = 'source-over'
-
       drawSnake(time)
 
       for (const p of particles) {
@@ -205,7 +261,7 @@ function SnakeTextCanvas() {
           const dx = p.x - node.x
           const dy = p.y - node.y
           const dist = Math.sqrt(dx * dx + dy * dy) || 1
-          const radius = 95 - i * 0.8
+          const radius = 96 - i * 0.65
           if (dist < radius) {
             const force = (radius - dist) / radius
             repelX += (dx / dist) * force * 8
@@ -214,10 +270,8 @@ function SnakeTextCanvas() {
           }
         }
 
-        const homeX = (p.tx - p.x) * 0.018
-        const homeY = (p.ty - p.y) * 0.018
-        p.vx += homeX + repelX
-        p.vy += homeY + repelY
+        p.vx += (p.tx - p.x) * 0.018 + repelX
+        p.vy += (p.ty - p.y) * 0.018 + repelY
         p.vx *= 0.78
         p.vy *= 0.78
         p.x += p.vx
