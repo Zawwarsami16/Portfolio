@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 const systems = [
   {
@@ -44,12 +44,6 @@ const systems = [
   },
 ]
 
-const orbitWords = [
-  'markets', 'restaurants', 'interfaces', 'research', 'motion', 'signals', 'systems', 'websites',
-  'dashboards', 'studio', 'experiments', 'data', 'ops', 'founder', 'terminals', 'clients',
-  'macro', 'crypto', 'design', 'software'
-]
-
 const principles = [
   'I am not attached to one category.',
   'A market terminal and a restaurant dashboard can come from the same instinct.',
@@ -81,52 +75,128 @@ function ProjectCard({ project, index }) {
   )
 }
 
-function LivingField() {
-  const [mouse, setMouse] = useState({ x: 50, y: 50 })
+function ParticleTextCanvas() {
+  const canvasRef = useRef(null)
 
   useEffect(() => {
-    const move = event => {
-      setMouse({
-        x: (event.clientX / window.innerWidth) * 100,
-        y: (event.clientY / window.innerHeight) * 100,
-      })
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d', { alpha: true })
+    const particles = []
+    const mouse = { x: -9999, y: -9999, active: false }
+    let width = 0
+    let height = 0
+    let dpr = Math.min(window.devicePixelRatio || 1, 2)
+    let animationId
+
+    const phrases = ['SYSTEMS', 'BEFORE', 'LABELS']
+
+    const buildParticles = () => {
+      const rect = canvas.parentElement.getBoundingClientRect()
+      width = Math.max(320, rect.width)
+      height = Math.max(420, rect.height)
+      dpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.floor(width * dpr)
+      canvas.height = Math.floor(height * dpr)
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      const off = document.createElement('canvas')
+      const offCtx = off.getContext('2d')
+      off.width = Math.floor(width)
+      off.height = Math.floor(height)
+      offCtx.clearRect(0, 0, width, height)
+      offCtx.textAlign = 'center'
+      offCtx.textBaseline = 'middle'
+      offCtx.fillStyle = '#ffffff'
+      offCtx.font = `900 ${Math.max(42, Math.min(width * 0.135, 118))}px Inter, system-ui, sans-serif`
+      const lineHeight = Math.max(54, Math.min(width * 0.145, 126))
+      const startY = height * 0.43 - lineHeight
+      phrases.forEach((text, index) => offCtx.fillText(text, width / 2, startY + index * lineHeight))
+
+      const imageData = offCtx.getImageData(0, 0, off.width, off.height).data
+      const step = width < 640 ? 7 : 6
+      particles.length = 0
+      for (let y = 0; y < off.height; y += step) {
+        for (let x = 0; x < off.width; x += step) {
+          const alpha = imageData[(y * off.width + x) * 4 + 3]
+          if (alpha > 80) {
+            particles.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              tx: x,
+              ty: y,
+              vx: 0,
+              vy: 0,
+              r: Math.random() * 1.35 + 0.55,
+              gold: Math.random() > 0.72,
+              drift: Math.random() * Math.PI * 2,
+            })
+          }
+        }
+      }
     }
-    window.addEventListener('pointermove', move)
-    return () => window.removeEventListener('pointermove', move)
+
+    const draw = time => {
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalCompositeOperation = 'lighter'
+
+      for (const p of particles) {
+        const dx = p.tx - p.x
+        const dy = p.ty - p.y
+        p.vx += dx * 0.012
+        p.vy += dy * 0.012
+
+        if (mouse.active) {
+          const mx = p.x - mouse.x
+          const my = p.y - mouse.y
+          const dist = Math.sqrt(mx * mx + my * my)
+          const radius = 128
+          if (dist < radius) {
+            const force = (radius - dist) / radius
+            p.vx += (mx / (dist || 1)) * force * 7.5
+            p.vy += (my / (dist || 1)) * force * 7.5
+          }
+        }
+
+        p.vx *= 0.82
+        p.vy *= 0.82
+        p.x += p.vx + Math.cos(time * 0.001 + p.drift) * 0.045
+        p.y += p.vy + Math.sin(time * 0.001 + p.drift) * 0.045
+
+        ctx.beginPath()
+        ctx.fillStyle = p.gold ? 'rgba(198,169,107,.82)' : 'rgba(230,232,236,.62)'
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      ctx.globalCompositeOperation = 'source-over'
+      animationId = requestAnimationFrame(draw)
+    }
+
+    const pointerMove = event => {
+      const rect = canvas.getBoundingClientRect()
+      mouse.x = event.clientX - rect.left
+      mouse.y = event.clientY - rect.top
+      mouse.active = true
+    }
+    const pointerLeave = () => { mouse.active = false }
+
+    buildParticles()
+    animationId = requestAnimationFrame(draw)
+    window.addEventListener('resize', buildParticles)
+    canvas.addEventListener('pointermove', pointerMove)
+    canvas.addEventListener('pointerleave', pointerLeave)
+
+    return () => {
+      cancelAnimationFrame(animationId)
+      window.removeEventListener('resize', buildParticles)
+      canvas.removeEventListener('pointermove', pointerMove)
+      canvas.removeEventListener('pointerleave', pointerLeave)
+    }
   }, [])
 
-  return (
-    <div className="living-field" aria-hidden="true">
-      {orbitWords.map((word, index) => {
-        const angle = (index / orbitWords.length) * Math.PI * 2
-        const ring = index % 2 === 0 ? 1 : 1.18
-        const baseX = 50 + Math.cos(angle) * 31 * ring
-        const baseY = 50 + Math.sin(angle) * 24 * ring
-        const dx = baseX - mouse.x
-        const dy = baseY - mouse.y
-        const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-        const force = Math.max(0, 22 - distance) / 22
-        const pushX = (dx / distance) * force * 32
-        const pushY = (dy / distance) * force * 24
-        const scale = 1 + force * 0.25
-
-        return (
-          <span
-            key={word}
-            className="creature-word"
-            style={{
-              left: `${baseX}%`,
-              top: `${baseY}%`,
-              transform: `translate(${pushX}px, ${pushY}px) rotate(${Math.sin(index * 1.7) * 12}deg) scale(${scale})`,
-              animationDelay: `${index * -0.28}s`,
-            }}
-          >
-            {word}
-          </span>
-        )
-      })}
-    </div>
-  )
+  return <canvas ref={canvasRef} className="particle-canvas" aria-hidden="true" />
 }
 
 function ExclusionStatement() {
@@ -162,14 +232,13 @@ export default function App() {
         </div>
       </nav>
 
-      <section id="top" className="hero hero-centered">
-        <LivingField />
-        <div className="hero-core">
+      <section id="top" className="hero hero-canvas">
+        <ParticleTextCanvas />
+        <div className="hero-overlay">
           <p className="eyebrow">Founder of Anteroom · Builder beyond it</p>
-          <h1>Systems before labels.</h1>
           <p className="vision-line">Markets. Operations. Research. Websites. Interfaces that move.</p>
           <p className="lede">
-            I build across domains — taking loose ideas, messy signals, and raw workflows, then shaping them into software that feels alive and useful.
+            I build across domains — turning loose signals and raw workflows into software that feels alive and useful.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#systems">Enter the Work</a>
