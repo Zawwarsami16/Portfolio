@@ -2,14 +2,14 @@ const systems = [
   {
     name: 'Anteroom Oracle',
     type: 'Flagship Intelligence Terminal',
-    description: 'Macro and geopolitical research terminal combining market data, world-event signals, historical parallels, scenario summaries, and risk context.',
+    description: 'Macro and geopolitical research terminal for market context, historical parallels, scenario summaries, and risk signals.',
     stack: ['Python', 'Market Data', 'Geo Risk', 'Terminal UI'],
     repo: 'https://github.com/anteroom-studio/anteroom-oracle',
   },
   {
     name: 'Anteroom Crypto Terminal',
     type: 'Live Market Interface',
-    description: 'Institutional-style crypto terminal for structure, liquidity, execution quality, market scans, liquidation pressure, and analyst reads.',
+    description: 'Institutional-style crypto interface for liquidity, execution quality, liquidation pressure, and live market reads.',
     stack: ['React', 'Vite', 'Live Data', 'GitHub Pages'],
     repo: 'https://github.com/anteroom-studio/Anteroom-Crypto-Terminal',
     live: 'https://anteroom-studio.github.io/Anteroom-Crypto-Terminal/',
@@ -17,43 +17,43 @@ const systems = [
   {
     name: 'Anteroom World Model',
     type: 'Research Engine',
-    description: 'Historical macro research system for cross-asset relationships, lead-lag behavior, stress-period comparison, and scenario analysis.',
+    description: 'Historical macro engine for cross-asset relationships, stress-period comparison, and regime research.',
     stack: ['Python', 'Macro Data', 'Correlation', 'Research'],
     repo: 'https://github.com/anteroom-studio/anteroom-world-model',
   },
   {
     name: 'Anteroom Data Model',
     type: 'Intelligence Core',
-    description: 'Multi-source market and event intelligence system with local model support, news monitoring, hardware-aware execution, and terminal review.',
+    description: 'Multi-source intelligence core with market data, world-event monitoring, local model support, and terminal review.',
     stack: ['Python', 'RSS', 'Local LLM', 'Market Data'],
     repo: 'https://github.com/anteroom-studio/anteroom-data-model-2',
   },
   {
     name: 'Restaurant Intelligence',
     type: 'Operations System',
-    description: 'Private multi-location restaurant operations dashboard for inventory movement, daily sales, delivery tracking, and role-based workflows.',
+    description: 'Private restaurant operations dashboard for stock movement, sales reporting, deliveries, and role-based workflows.',
     stack: ['React', 'Supabase', 'Inventory', 'Internal Tool'],
   },
   {
     name: 'Heritage Shawarma Website',
     type: 'Client Website',
-    description: 'Responsive restaurant website for Heritage Shawarma in Oshawa, built for menu discovery, local SEO, brand presence, and customer clarity.',
+    description: 'Responsive restaurant website built for menu discovery, local SEO, brand presence, and customer clarity.',
     stack: ['React', 'Vite', 'SEO', 'Client Work'],
   },
 ]
 
 const principles = [
-  'Build systems that feel useful before they feel impressive.',
-  'Design interfaces with the density of tools and the clarity of products.',
-  'Treat research output as signal context, not guaranteed prediction.',
-  'Ship prototypes, then refine them into credible studio assets.',
+  'Useful before impressive.',
+  'Dense when needed. Clear always.',
+  'Research signals, not guaranteed predictions.',
+  'Prototype fast. Refine into credible assets.',
 ]
 
 const stats = [
   ['Studio', 'Anteroom'],
-  ['Focus', 'Intelligence Systems'],
-  ['Stack', 'Python · React · Vite'],
-  ['Base', 'Toronto / Oshawa'],
+  ['Focus', 'Systems'],
+  ['Stack', 'Python · React'],
+  ['Base', 'Ontario'],
 ]
 
 function Badge({ children }) {
@@ -93,31 +93,30 @@ export default function App() {
         </a>
         <div className="nav-links">
           <a href="#systems">Systems</a>
-          <a href="#studio">Studio</a>
+          <a href="#studio">Vision</a>
           <a href="#contact">Contact</a>
         </div>
       </nav>
 
-      <section id="top" className="hero section-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">Founder-minded builder · Anteroom Studio</p>
-          <h1>Building intelligence systems, market terminals, and operational software with serious product discipline.</h1>
+      <section id="top" className="hero">
+        <div className="hero-left">
+          <p className="eyebrow">Anteroom Studio · Systems Builder</p>
+          <h1>Software with structure.</h1>
+          <p className="vision-line">Intelligence terminals. Research engines. Operational dashboards. Client websites.</p>
           <p className="lede">
-            I design and build research tools, live dashboards, internal systems, and client-facing web experiences. My work sits between software engineering, interface design, market intelligence, and practical operations.
+            I build focused software systems that turn messy information into usable interfaces.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href="#systems">View Systems</a>
-            <a className="button" href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">GitHub</a>
-            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom Studio</a>
+            <a className="button primary" href="#systems">View Work</a>
+            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Studio</a>
           </div>
         </div>
+
         <aside className="hero-panel">
-          <div className="terminal-topline">
-            <span></span><span></span><span></span>
-          </div>
-          <p className="panel-label">Current Direction</p>
-          <h2>Anteroom Stack</h2>
-          <p>Macro research, crypto terminals, restaurant intelligence, and client websites — organized into one studio ecosystem.</p>
+          <div className="terminal-topline"><span></span><span></span><span></span></div>
+          <p className="panel-label">Current Build Direction</p>
+          <h2>One stack. Multiple systems.</h2>
+          <p>Market intelligence, macro research, internal operations, and client-facing products under one studio direction.</p>
           <div className="stat-grid">
             {stats.map(([label, value]) => (
               <div className="stat" key={label}>
@@ -132,8 +131,8 @@ export default function App() {
       <section id="systems" className="systems-section">
         <div className="section-heading">
           <p className="eyebrow">Selected Work</p>
-          <h2>Systems that form the Anteroom ecosystem.</h2>
-          <p>Public research projects, live interfaces, private operational tools, and client work — presented as a coherent builder portfolio.</p>
+          <h2>Systems, not scattered projects.</h2>
+          <p>A curated stack of research tools, market terminals, operations software, and client-facing websites.</p>
         </div>
         <div className="project-grid">
           {systems.map((project, index) => <ProjectCard key={project.name} project={project} index={index} />)}
@@ -142,10 +141,10 @@ export default function App() {
 
       <section id="studio" className="studio-section section-grid">
         <div>
-          <p className="eyebrow">Design Philosophy</p>
-          <h2>From experiments to credible software assets.</h2>
+          <p className="eyebrow">Vision</p>
+          <h2>Build fast. Polish hard. Present clearly.</h2>
           <p className="lede compact">
-            The goal is not to make projects look louder. It is to make them feel more intentional: better naming, cleaner structure, safer configuration, sharper interfaces, and stronger positioning.
+            The work is moving from experiments into a coherent studio portfolio: cleaner names, safer configuration, better interfaces, and stronger positioning.
           </p>
         </div>
         <div className="principles">
@@ -160,7 +159,7 @@ export default function App() {
 
       <section id="contact" className="contact-section">
         <p className="eyebrow">Contact</p>
-        <h2>Open to serious builds, systems work, and studio collaborations.</h2>
+        <h2>For serious builds, systems work, and product collaborations.</h2>
         <div className="contact-links">
           <a href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">Personal GitHub</a>
           <a href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom Studio</a>
