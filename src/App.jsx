@@ -11,7 +11,7 @@ const systems = [
   {
     name: 'Crypto Terminal',
     type: 'Live Market Interface',
-    description: 'Institutional-style crypto interface for liquidity, execution quality, liquidation pressure, and live market reads.',
+    description: 'Crypto interface for liquidity, execution quality, liquidation pressure, and live market reads.',
     stack: ['React', 'Vite', 'Live Data', 'GitHub Pages'],
     repo: 'https://github.com/anteroom-studio/Anteroom-Crypto-Terminal',
     live: 'https://anteroom-studio.github.io/Anteroom-Crypto-Terminal/',
@@ -75,103 +75,68 @@ function ProjectCard({ project, index }) {
   )
 }
 
-function ParticleTextCanvas() {
+function SnakeTextCanvas() {
   const canvasRef = useRef(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d', { alpha: true })
-    const particles = []
-    const mouse = { x: -9999, y: -9999, active: false }
     let width = 0
     let height = 0
-    let dpr = Math.min(window.devicePixelRatio || 1, 2)
-    let animationId
+    let dpr = 1
+    let raf
+    let particles = []
+    const mouse = { x: 0, y: 0, active: false }
+    const snake = Array.from({ length: 34 }, () => ({ x: 0, y: 0 }))
+    const phrase = 'ZAWWAR SAMI  SYSTEMS  MOTION  MARKETS  RESTAURANTS  RESEARCH  INTERFACES  BEYOND ANTEROOM  '
 
-    const phrases = ['SYSTEMS', 'BEFORE', 'LABELS']
-
-    const buildParticles = () => {
+    const resize = () => {
       const rect = canvas.parentElement.getBoundingClientRect()
       width = Math.max(320, rect.width)
-      height = Math.max(420, rect.height)
+      height = Math.max(520, rect.height)
       dpr = Math.min(window.devicePixelRatio || 1, 2)
       canvas.width = Math.floor(width * dpr)
       canvas.height = Math.floor(height * dpr)
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      const off = document.createElement('canvas')
-      const offCtx = off.getContext('2d')
-      off.width = Math.floor(width)
-      off.height = Math.floor(height)
-      offCtx.clearRect(0, 0, width, height)
-      offCtx.textAlign = 'center'
-      offCtx.textBaseline = 'middle'
-      offCtx.fillStyle = '#ffffff'
-      offCtx.font = `900 ${Math.max(42, Math.min(width * 0.135, 118))}px Inter, system-ui, sans-serif`
-      const lineHeight = Math.max(54, Math.min(width * 0.145, 126))
-      const startY = height * 0.43 - lineHeight
-      phrases.forEach((text, index) => offCtx.fillText(text, width / 2, startY + index * lineHeight))
-
-      const imageData = offCtx.getImageData(0, 0, off.width, off.height).data
-      const step = width < 640 ? 7 : 6
-      particles.length = 0
-      for (let y = 0; y < off.height; y += step) {
-        for (let x = 0; x < off.width; x += step) {
-          const alpha = imageData[(y * off.width + x) * 4 + 3]
-          if (alpha > 80) {
-            particles.push({
-              x: Math.random() * width,
-              y: Math.random() * height,
-              tx: x,
-              ty: y,
-              vx: 0,
-              vy: 0,
-              r: Math.random() * 1.35 + 0.55,
-              gold: Math.random() > 0.72,
-              drift: Math.random() * Math.PI * 2,
-            })
-          }
-        }
-      }
+      makeParticles()
+      snake.forEach((node, i) => {
+        node.x = width * 0.5 - i * 12
+        node.y = height * 0.5
+      })
     }
 
-    const draw = time => {
-      ctx.clearRect(0, 0, width, height)
-      ctx.globalCompositeOperation = 'lighter'
+    const makeParticles = () => {
+      particles = []
+      const columns = width < 700 ? 20 : 34
+      const rows = width < 700 ? 12 : 16
+      const startX = width * 0.08
+      const endX = width * 0.92
+      const startY = height * 0.18
+      const endY = height * 0.84
+      let charIndex = 0
 
-      for (const p of particles) {
-        const dx = p.tx - p.x
-        const dy = p.ty - p.y
-        p.vx += dx * 0.012
-        p.vy += dy * 0.012
-
-        if (mouse.active) {
-          const mx = p.x - mouse.x
-          const my = p.y - mouse.y
-          const dist = Math.sqrt(mx * mx + my * my)
-          const radius = 128
-          if (dist < radius) {
-            const force = (radius - dist) / radius
-            p.vx += (mx / (dist || 1)) * force * 7.5
-            p.vy += (my / (dist || 1)) * force * 7.5
-          }
+      for (let row = 0; row < rows; row += 1) {
+        for (let col = 0; col < columns; col += 1) {
+          const char = phrase[charIndex % phrase.length]
+          charIndex += 1
+          if (char === ' ') continue
+          const tx = startX + (col / Math.max(columns - 1, 1)) * (endX - startX)
+          const ty = startY + (row / Math.max(rows - 1, 1)) * (endY - startY)
+          particles.push({
+            char,
+            x: tx + (Math.random() - 0.5) * 80,
+            y: ty + (Math.random() - 0.5) * 80,
+            tx,
+            ty,
+            vx: 0,
+            vy: 0,
+            size: 11 + Math.random() * 8,
+            tone: Math.random(),
+          })
         }
-
-        p.vx *= 0.82
-        p.vy *= 0.82
-        p.x += p.vx + Math.cos(time * 0.001 + p.drift) * 0.045
-        p.y += p.vy + Math.sin(time * 0.001 + p.drift) * 0.045
-
-        ctx.beginPath()
-        ctx.fillStyle = p.gold ? 'rgba(198,169,107,.82)' : 'rgba(230,232,236,.62)'
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fill()
       }
-
-      ctx.globalCompositeOperation = 'source-over'
-      animationId = requestAnimationFrame(draw)
     }
 
     const pointerMove = event => {
@@ -182,21 +147,113 @@ function ParticleTextCanvas() {
     }
     const pointerLeave = () => { mouse.active = false }
 
-    buildParticles()
-    animationId = requestAnimationFrame(draw)
-    window.addEventListener('resize', buildParticles)
+    const drawSnake = time => {
+      const targetX = mouse.active ? mouse.x : width * 0.5 + Math.cos(time * 0.00055) * width * 0.28
+      const targetY = mouse.active ? mouse.y : height * 0.5 + Math.sin(time * 0.00072) * height * 0.24
+
+      snake[0].x += (targetX - snake[0].x) * 0.075
+      snake[0].y += (targetY - snake[0].y) * 0.075
+
+      for (let i = 1; i < snake.length; i += 1) {
+        const prev = snake[i - 1]
+        const node = snake[i]
+        const dx = prev.x - node.x
+        const dy = prev.y - node.y
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1
+        const spacing = 13
+        node.x += (dx / dist) * (dist - spacing) * 0.42
+        node.y += (dy / dist) * (dist - spacing) * 0.42
+      }
+
+      ctx.save()
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      ctx.shadowBlur = 22
+      ctx.shadowColor = 'rgba(198,169,107,.35)'
+      for (let pass = 0; pass < 3; pass += 1) {
+        ctx.beginPath()
+        snake.forEach((node, i) => {
+          if (i === 0) ctx.moveTo(node.x, node.y)
+          else ctx.lineTo(node.x, node.y)
+        })
+        ctx.strokeStyle = pass === 0 ? 'rgba(198,169,107,.08)' : pass === 1 ? 'rgba(154,215,255,.12)' : 'rgba(230,232,236,.48)'
+        ctx.lineWidth = pass === 0 ? 24 : pass === 1 ? 12 : 3
+        ctx.stroke()
+      }
+      const head = snake[0]
+      ctx.shadowBlur = 18
+      ctx.fillStyle = 'rgba(198,169,107,.95)'
+      ctx.beginPath()
+      ctx.arc(head.x, head.y, 6.5, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+
+    const tick = time => {
+      ctx.clearRect(0, 0, width, height)
+      ctx.globalCompositeOperation = 'source-over'
+
+      drawSnake(time)
+
+      for (const p of particles) {
+        let repelX = 0
+        let repelY = 0
+        let strongest = 0
+
+        for (let i = 0; i < snake.length; i += 3) {
+          const node = snake[i]
+          const dx = p.x - node.x
+          const dy = p.y - node.y
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1
+          const radius = 95 - i * 0.8
+          if (dist < radius) {
+            const force = (radius - dist) / radius
+            repelX += (dx / dist) * force * 8
+            repelY += (dy / dist) * force * 8
+            strongest = Math.max(strongest, force)
+          }
+        }
+
+        const homeX = (p.tx - p.x) * 0.018
+        const homeY = (p.ty - p.y) * 0.018
+        p.vx += homeX + repelX
+        p.vy += homeY + repelY
+        p.vx *= 0.78
+        p.vy *= 0.78
+        p.x += p.vx
+        p.y += p.vy
+
+        ctx.save()
+        ctx.translate(p.x, p.y)
+        ctx.rotate((p.vx + p.vy) * 0.015)
+        ctx.font = `700 ${p.size + strongest * 7}px Inter, system-ui, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = p.tone > 0.78
+          ? `rgba(198,169,107,${0.34 + strongest * 0.48})`
+          : `rgba(230,232,236,${0.18 + strongest * 0.52})`
+        ctx.fillText(p.char, 0, 0)
+        ctx.restore()
+      }
+
+      raf = requestAnimationFrame(tick)
+    }
+
+    resize()
+    raf = requestAnimationFrame(tick)
+    window.addEventListener('resize', resize)
     canvas.addEventListener('pointermove', pointerMove)
     canvas.addEventListener('pointerleave', pointerLeave)
 
     return () => {
-      cancelAnimationFrame(animationId)
-      window.removeEventListener('resize', buildParticles)
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', resize)
       canvas.removeEventListener('pointermove', pointerMove)
       canvas.removeEventListener('pointerleave', pointerLeave)
     }
   }, [])
 
-  return <canvas ref={canvasRef} className="particle-canvas" aria-hidden="true" />
+  return <canvas ref={canvasRef} className="snake-canvas" aria-hidden="true" />
 }
 
 function ExclusionStatement() {
@@ -222,7 +279,7 @@ export default function App() {
           <span className="brand-mark">ZS</span>
           <span>
             <strong>Zawwar Sami</strong>
-            <small>Independent Systems Builder</small>
+            <small>Independent Builder</small>
           </span>
         </a>
         <div className="nav-links">
@@ -232,13 +289,14 @@ export default function App() {
         </div>
       </nav>
 
-      <section id="top" className="hero hero-canvas">
-        <ParticleTextCanvas />
-        <div className="hero-overlay">
-          <p className="eyebrow">Founder of Anteroom · Builder beyond it</p>
-          <p className="vision-line">Markets. Operations. Research. Websites. Interfaces that move.</p>
+      <section id="top" className="hero hero-snake">
+        <SnakeTextCanvas />
+        <div className="hero-overlay personal-overlay">
+          <p className="eyebrow">Zawwar Sami · Founder of Anteroom</p>
+          <h1>Beyond one room.</h1>
+          <p className="vision-line">Markets. Restaurants. Research. Websites. Strange interfaces.</p>
           <p className="lede">
-            I build across domains — turning loose signals and raw workflows into software that feels alive and useful.
+            I build whatever the idea demands — tools that crawl, react, organize, and become useful.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#systems">Enter the Work</a>
