@@ -129,6 +129,21 @@ function LivingField() {
   )
 }
 
+function ExclusionStatement() {
+  return (
+    <section className="exclusion-section" aria-label="builder statement">
+      <div className="exclusion-wrap">
+        <div className="shape-left" aria-hidden="true"></div>
+        <div className="shape-right" aria-hidden="true"></div>
+        <p className="eyebrow">Shape of the Work</p>
+        <p className="exclusion-copy">
+          I move between domains because the work underneath is the same. A trading terminal, a restaurant dashboard, a research model, and a client website are all different surfaces over one deeper instinct: organize chaos into something people can use. The tools change. The structure does not. Anteroom is one room in that architecture — not the building.
+        </p>
+      </div>
+    </section>
+  )
+}
+
 export default function App() {
   return (
     <main className="site-shell">
@@ -163,6 +178,8 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      <ExclusionStatement />
 
       <section id="systems" className="systems-section">
         <div className="section-heading">
