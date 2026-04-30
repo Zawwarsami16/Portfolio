@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 const systems = [
   {
     name: 'Anteroom Oracle',
-    type: 'Flagship Intelligence Terminal',
-    description: 'Macro and geopolitical research terminal for market context, historical parallels, scenario summaries, and risk signals.',
+    type: 'Intelligence Terminal',
+    description: 'Macro and geopolitical research system for market context, historical parallels, scenario summaries, and risk signals.',
     stack: ['Python', 'Market Data', 'Geo Risk', 'Terminal UI'],
     repo: 'https://github.com/anteroom-studio/anteroom-oracle',
   },
   {
-    name: 'Anteroom Crypto Terminal',
+    name: 'Crypto Terminal',
     type: 'Live Market Interface',
     description: 'Institutional-style crypto interface for liquidity, execution quality, liquidation pressure, and live market reads.',
     stack: ['React', 'Vite', 'Live Data', 'GitHub Pages'],
@@ -17,14 +17,14 @@ const systems = [
     live: 'https://anteroom-studio.github.io/Anteroom-Crypto-Terminal/',
   },
   {
-    name: 'Anteroom World Model',
+    name: 'World Model',
     type: 'Research Engine',
     description: 'Historical macro engine for cross-asset relationships, stress-period comparison, and regime research.',
     stack: ['Python', 'Macro Data', 'Correlation', 'Research'],
     repo: 'https://github.com/anteroom-studio/anteroom-world-model',
   },
   {
-    name: 'Anteroom Data Model',
+    name: 'Data Model',
     type: 'Intelligence Core',
     description: 'Multi-source intelligence core with market data, world-event monitoring, local model support, and terminal review.',
     stack: ['Python', 'RSS', 'Local LLM', 'Market Data'],
@@ -45,15 +45,16 @@ const systems = [
 ]
 
 const orbitWords = [
-  'oracle', 'markets', 'systems', 'signals', 'research', 'interfaces', 'models', 'ops',
-  'crypto', 'macro', 'dashboards', 'data', 'risk', 'terminal', 'clients', 'studio'
+  'markets', 'restaurants', 'interfaces', 'research', 'motion', 'signals', 'systems', 'websites',
+  'dashboards', 'studio', 'experiments', 'data', 'ops', 'founder', 'terminals', 'clients',
+  'macro', 'crypto', 'design', 'software'
 ]
 
 const principles = [
-  'Useful before impressive.',
-  'Dense when needed. Clear always.',
-  'Research signals, not guaranteed predictions.',
-  'Prototype fast. Refine into credible assets.',
+  'I am not attached to one category.',
+  'A market terminal and a restaurant dashboard can come from the same instinct.',
+  'The label changes. The structure stays.',
+  'Anteroom is one expression — not the limit.',
 ]
 
 function Badge({ children }) {
@@ -98,14 +99,16 @@ function LivingField() {
     <div className="living-field" aria-hidden="true">
       {orbitWords.map((word, index) => {
         const angle = (index / orbitWords.length) * Math.PI * 2
-        const baseX = 50 + Math.cos(angle) * (28 + (index % 3) * 4)
-        const baseY = 50 + Math.sin(angle) * (22 + (index % 4) * 3)
+        const ring = index % 2 === 0 ? 1 : 1.18
+        const baseX = 50 + Math.cos(angle) * 31 * ring
+        const baseY = 50 + Math.sin(angle) * 24 * ring
         const dx = baseX - mouse.x
         const dy = baseY - mouse.y
         const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
-        const force = Math.max(0, 18 - distance) / 18
-        const pushX = (dx / distance) * force * 24
-        const pushY = (dy / distance) * force * 18
+        const force = Math.max(0, 22 - distance) / 22
+        const pushX = (dx / distance) * force * 32
+        const pushY = (dy / distance) * force * 24
+        const scale = 1 + force * 0.25
 
         return (
           <span
@@ -114,8 +117,8 @@ function LivingField() {
             style={{
               left: `${baseX}%`,
               top: `${baseY}%`,
-              transform: `translate(${pushX}px, ${pushY}px) rotate(${Math.sin(index) * 10}deg)`,
-              animationDelay: `${index * -0.35}s`,
+              transform: `translate(${pushX}px, ${pushY}px) rotate(${Math.sin(index * 1.7) * 12}deg) scale(${scale})`,
+              animationDelay: `${index * -0.28}s`,
             }}
           >
             {word}
@@ -131,15 +134,15 @@ export default function App() {
     <main className="site-shell">
       <nav className="nav">
         <a className="brand" href="#top" aria-label="Zawwar Sami home">
-          <span className="brand-mark">A</span>
+          <span className="brand-mark">ZS</span>
           <span>
             <strong>Zawwar Sami</strong>
-            <small>Systems Portfolio</small>
+            <small>Independent Systems Builder</small>
           </span>
         </a>
         <div className="nav-links">
           <a href="#systems">Systems</a>
-          <a href="#studio">Vision</a>
+          <a href="#studio">Beyond</a>
           <a href="#contact">Contact</a>
         </div>
       </nav>
@@ -147,15 +150,16 @@ export default function App() {
       <section id="top" className="hero hero-centered">
         <LivingField />
         <div className="hero-core">
-          <p className="eyebrow">Anteroom Studio · Systems Builder</p>
-          <h1>Software with structure.</h1>
-          <p className="vision-line">Signals into systems. Systems into products.</p>
+          <p className="eyebrow">Founder of Anteroom · Builder beyond it</p>
+          <h1>Systems before labels.</h1>
+          <p className="vision-line">Markets. Operations. Research. Websites. Interfaces that move.</p>
           <p className="lede">
-            I build intelligence terminals, research engines, operational dashboards, and client websites — with motion, discipline, and a little madness.
+            I build across domains — taking loose ideas, messy signals, and raw workflows, then shaping them into software that feels alive and useful.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href="#systems">View Work</a>
-            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Studio</a>
+            <a className="button primary" href="#systems">Enter the Work</a>
+            <a className="button" href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">GitHub</a>
+            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom</a>
           </div>
         </div>
       </section>
@@ -163,20 +167,20 @@ export default function App() {
       <section id="systems" className="systems-section">
         <div className="section-heading">
           <p className="eyebrow">Selected Work</p>
-          <h2>Systems, not scattered projects.</h2>
-          <p>A curated stack of research tools, market terminals, operations software, and client-facing websites.</p>
+          <h2>Different domains. Same instinct.</h2>
+          <p>Research systems, terminals, dashboards, and client websites — some under Anteroom, some beyond it.</p>
         </div>
         <div className="project-grid">
           {systems.map((project, index) => <ProjectCard key={project.name} project={project} index={index} />)}
         </div>
       </section>
 
-      <section id="studio" className="studio-section section-grid">
-        <div>
-          <p className="eyebrow">Vision</p>
-          <h2>Build fast. Polish hard. Present clearly.</h2>
+      <section id="studio" className="studio-section beyond-section">
+        <div className="beyond-copy">
+          <p className="eyebrow">Beyond the Studio</p>
+          <h2>Anteroom is not the ceiling. It is one room.</h2>
           <p className="lede compact">
-            The work is moving from experiments into a coherent studio portfolio: cleaner names, safer configuration, better interfaces, and stronger positioning.
+            My work is not tied to one industry or one label. The pattern is the same: find the signal, build the structure, make the interface feel inevitable.
           </p>
         </div>
         <div className="principles">
@@ -200,8 +204,8 @@ export default function App() {
       </section>
 
       <footer>
-        <span>ANTEROOM / Zawwar Sami</span>
-        <span>Systems · Interfaces · Intelligence</span>
+        <span>Zawwar Sami / Beyond Anteroom</span>
+        <span>Systems · Interfaces · Motion</span>
       </footer>
     </main>
   )
