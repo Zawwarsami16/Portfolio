@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 const systems = [
   {
     name: 'Anteroom Oracle',
@@ -42,18 +44,16 @@ const systems = [
   },
 ]
 
+const orbitWords = [
+  'oracle', 'markets', 'systems', 'signals', 'research', 'interfaces', 'models', 'ops',
+  'crypto', 'macro', 'dashboards', 'data', 'risk', 'terminal', 'clients', 'studio'
+]
+
 const principles = [
   'Useful before impressive.',
   'Dense when needed. Clear always.',
   'Research signals, not guaranteed predictions.',
   'Prototype fast. Refine into credible assets.',
-]
-
-const stats = [
-  ['Studio', 'Anteroom'],
-  ['Focus', 'Systems'],
-  ['Stack', 'Python · React'],
-  ['Base', 'Ontario'],
 ]
 
 function Badge({ children }) {
@@ -80,6 +80,52 @@ function ProjectCard({ project, index }) {
   )
 }
 
+function LivingField() {
+  const [mouse, setMouse] = useState({ x: 50, y: 50 })
+
+  useEffect(() => {
+    const move = event => {
+      setMouse({
+        x: (event.clientX / window.innerWidth) * 100,
+        y: (event.clientY / window.innerHeight) * 100,
+      })
+    }
+    window.addEventListener('pointermove', move)
+    return () => window.removeEventListener('pointermove', move)
+  }, [])
+
+  return (
+    <div className="living-field" aria-hidden="true">
+      {orbitWords.map((word, index) => {
+        const angle = (index / orbitWords.length) * Math.PI * 2
+        const baseX = 50 + Math.cos(angle) * (28 + (index % 3) * 4)
+        const baseY = 50 + Math.sin(angle) * (22 + (index % 4) * 3)
+        const dx = baseX - mouse.x
+        const dy = baseY - mouse.y
+        const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1)
+        const force = Math.max(0, 18 - distance) / 18
+        const pushX = (dx / distance) * force * 24
+        const pushY = (dy / distance) * force * 18
+
+        return (
+          <span
+            key={word}
+            className="creature-word"
+            style={{
+              left: `${baseX}%`,
+              top: `${baseY}%`,
+              transform: `translate(${pushX}px, ${pushY}px) rotate(${Math.sin(index) * 10}deg)`,
+              animationDelay: `${index * -0.35}s`,
+            }}
+          >
+            {word}
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <main className="site-shell">
@@ -98,34 +144,20 @@ export default function App() {
         </div>
       </nav>
 
-      <section id="top" className="hero">
-        <div className="hero-left">
+      <section id="top" className="hero hero-centered">
+        <LivingField />
+        <div className="hero-core">
           <p className="eyebrow">Anteroom Studio · Systems Builder</p>
           <h1>Software with structure.</h1>
-          <p className="vision-line">Intelligence terminals. Research engines. Operational dashboards. Client websites.</p>
+          <p className="vision-line">Signals into systems. Systems into products.</p>
           <p className="lede">
-            I build focused software systems that turn messy information into usable interfaces.
+            I build intelligence terminals, research engines, operational dashboards, and client websites — with motion, discipline, and a little madness.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#systems">View Work</a>
             <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Studio</a>
           </div>
         </div>
-
-        <aside className="hero-panel">
-          <div className="terminal-topline"><span></span><span></span><span></span></div>
-          <p className="panel-label">Current Build Direction</p>
-          <h2>One stack. Multiple systems.</h2>
-          <p>Market intelligence, macro research, internal operations, and client-facing products under one studio direction.</p>
-          <div className="stat-grid">
-            {stats.map(([label, value]) => (
-              <div className="stat" key={label}>
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))}
-          </div>
-        </aside>
       </section>
 
       <section id="systems" className="systems-section">
