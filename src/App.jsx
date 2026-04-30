@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 const systems = [
   {
     name: 'Anteroom Oracle',
@@ -56,6 +58,8 @@ const layers = [
   { text: 'interfaces', speed: 0.18, x: '72%', y: '70%' },
   { text: 'systems', speed: -0.12, x: '42%', y: '9%' },
   { text: 'beyond', speed: 0.30, x: '46%', y: '82%' },
+  { text: 'motion', speed: -0.26, x: '82%', y: '42%' },
+  { text: 'structure', speed: 0.14, x: '5%', y: '45%' },
 ]
 
 function Badge({ children }) {
@@ -64,7 +68,7 @@ function Badge({ children }) {
 
 function ProjectCard({ project, index }) {
   return (
-    <article className="project-card parallax-card">
+    <article className="project-card parallax-card reveal" style={{ '--delay': `${index * 70}ms` }}>
       <div className="project-index">0{index + 1}</div>
       <div>
         <p className="eyebrow">{project.type}</p>
@@ -82,13 +86,51 @@ function ProjectCard({ project, index }) {
   )
 }
 
+function ParallaxController() {
+  useEffect(() => {
+    let raf = 0
+    const root = document.documentElement
+
+    const update = () => {
+      const scroll = window.scrollY || 0
+      const max = Math.max(1, document.body.scrollHeight - window.innerHeight)
+      root.style.setProperty('--scroll', `${scroll}`)
+      root.style.setProperty('--scroll-progress', `${scroll / max}`)
+      raf = 0
+    }
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+
+    const onMouseMove = event => {
+      root.style.setProperty('--mx', `${event.clientX / window.innerWidth - 0.5}`)
+      root.style.setProperty('--my', `${event.clientY / window.innerHeight - 0.5}`)
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('mousemove', onMouseMove)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('mousemove', onMouseMove)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
+  return null
+}
+
 function ParallaxHero() {
   return (
     <section id="top" className="hero hero-parallax">
       <div className="parallax-stage" aria-hidden="true">
-        <div className="orb orb-one" data-speed="-0.25"></div>
-        <div className="orb orb-two" data-speed="0.35"></div>
-        <div className="depth-grid" data-speed="0.15"></div>
+        <div className="orb orb-one"></div>
+        <div className="orb orb-two"></div>
+        <div className="orb orb-three"></div>
+        <div className="depth-grid"></div>
+        <div className="depth-ring ring-one"></div>
+        <div className="depth-ring ring-two"></div>
         {layers.map(layer => (
           <span
             key={layer.text}
@@ -100,7 +142,7 @@ function ParallaxHero() {
         ))}
       </div>
 
-      <div className="hero-center">
+      <div className="hero-center reveal strong-reveal">
         <p className="eyebrow">Zawwar Sami · Founder of Anteroom</p>
         <h1>Beyond one room.</h1>
         <p className="vision-line">I build across markets, restaurants, research, websites, and strange interfaces.</p>
@@ -119,7 +161,7 @@ function ParallaxHero() {
 
 function ExclusionStatement() {
   return (
-    <section className="exclusion-section" aria-label="builder statement">
+    <section className="exclusion-section reveal" aria-label="builder statement">
       <div className="exclusion-wrap">
         <div className="shape-left" aria-hidden="true"></div>
         <div className="shape-right" aria-hidden="true"></div>
@@ -135,6 +177,7 @@ function ExclusionStatement() {
 export default function App() {
   return (
     <main className="site-shell">
+      <ParallaxController />
       <nav className="nav">
         <a className="brand" href="#top" aria-label="Zawwar Sami home">
           <span className="brand-mark">ZS</span>
@@ -153,7 +196,7 @@ export default function App() {
       <ParallaxHero />
       <ExclusionStatement />
 
-      <section id="systems" className="systems-section parallax-section">
+      <section id="systems" className="systems-section parallax-section reveal">
         <div className="section-heading">
           <p className="eyebrow">Selected Work</p>
           <h2>Different domains. Same instinct.</h2>
@@ -164,7 +207,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="studio" className="studio-section beyond-section parallax-section">
+      <section id="studio" className="studio-section beyond-section parallax-section reveal">
         <div className="beyond-copy">
           <p className="eyebrow">Beyond the Studio</p>
           <h2>Anteroom is not the ceiling. It is one room.</h2>
@@ -174,7 +217,7 @@ export default function App() {
         </div>
         <div className="principles">
           {principles.map((item, index) => (
-            <div className="principle parallax-card" key={item}>
+            <div className="principle parallax-card reveal" style={{ '--delay': `${index * 90}ms` }} key={item}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <p>{item}</p>
             </div>
@@ -182,7 +225,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="contact" className="contact-section parallax-section">
+      <section id="contact" className="contact-section parallax-section reveal">
         <p className="eyebrow">Contact</p>
         <h2>For serious builds, systems work, and product collaborations.</h2>
         <div className="contact-links">
