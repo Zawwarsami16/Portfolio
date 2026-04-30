@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react'
-
 const systems = [
   {
     name: 'Anteroom Oracle',
@@ -51,13 +49,22 @@ const principles = [
   'Anteroom is one expression — not the limit.',
 ]
 
+const layers = [
+  { text: 'markets', speed: -0.18, x: '7%', y: '18%' },
+  { text: 'restaurants', speed: 0.24, x: '68%', y: '16%' },
+  { text: 'research', speed: -0.32, x: '12%', y: '66%' },
+  { text: 'interfaces', speed: 0.18, x: '72%', y: '70%' },
+  { text: 'systems', speed: -0.12, x: '42%', y: '9%' },
+  { text: 'beyond', speed: 0.30, x: '46%', y: '82%' },
+]
+
 function Badge({ children }) {
   return <span className="badge">{children}</span>
 }
 
 function ProjectCard({ project, index }) {
   return (
-    <article className="project-card">
+    <article className="project-card parallax-card">
       <div className="project-index">0{index + 1}</div>
       <div>
         <p className="eyebrow">{project.type}</p>
@@ -75,239 +82,39 @@ function ProjectCard({ project, index }) {
   )
 }
 
-function SnakeTextCanvas() {
-  const canvasRef = useRef(null)
+function ParallaxHero() {
+  return (
+    <section id="top" className="hero hero-parallax">
+      <div className="parallax-stage" aria-hidden="true">
+        <div className="orb orb-one" data-speed="-0.25"></div>
+        <div className="orb orb-two" data-speed="0.35"></div>
+        <div className="depth-grid" data-speed="0.15"></div>
+        {layers.map(layer => (
+          <span
+            key={layer.text}
+            className="parallax-word"
+            style={{ left: layer.x, top: layer.y, '--speed': layer.speed }}
+          >
+            {layer.text}
+          </span>
+        ))}
+      </div>
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d', { alpha: true })
-    let width = 0
-    let height = 0
-    let dpr = 1
-    let raf
-    let particles = []
-    const mouse = { x: 0, y: 0, active: false }
-    const snake = Array.from({ length: 46 }, () => ({ x: 0, y: 0 }))
-    const phrase = 'ZAWWAR SAMI  SYSTEMS  MOTION  MARKETS  RESTAURANTS  RESEARCH  INTERFACES  BEYOND ANTEROOM  '
-
-    const resize = () => {
-      const rect = canvas.parentElement.getBoundingClientRect()
-      width = Math.max(320, rect.width)
-      height = Math.max(520, rect.height)
-      dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.floor(width * dpr)
-      canvas.height = Math.floor(height * dpr)
-      canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      makeParticles()
-      snake.forEach((node, i) => {
-        node.x = width * 0.5 - i * 10
-        node.y = height * 0.5
-      })
-    }
-
-    const makeParticles = () => {
-      particles = []
-      const columns = width < 700 ? 20 : 34
-      const rows = width < 700 ? 12 : 16
-      const startX = width * 0.08
-      const endX = width * 0.92
-      const startY = height * 0.18
-      const endY = height * 0.84
-      let charIndex = 0
-
-      for (let row = 0; row < rows; row += 1) {
-        for (let col = 0; col < columns; col += 1) {
-          const char = phrase[charIndex % phrase.length]
-          charIndex += 1
-          if (char === ' ') continue
-          const tx = startX + (col / Math.max(columns - 1, 1)) * (endX - startX)
-          const ty = startY + (row / Math.max(rows - 1, 1)) * (endY - startY)
-          particles.push({
-            char,
-            x: tx + (Math.random() - 0.5) * 80,
-            y: ty + (Math.random() - 0.5) * 80,
-            tx,
-            ty,
-            vx: 0,
-            vy: 0,
-            size: 11 + Math.random() * 8,
-            tone: Math.random(),
-          })
-        }
-      }
-    }
-
-    const pointerMove = event => {
-      const rect = canvas.getBoundingClientRect()
-      mouse.x = event.clientX - rect.left
-      mouse.y = event.clientY - rect.top
-      mouse.active = true
-    }
-    const pointerLeave = () => { mouse.active = false }
-
-    const drawSnake = time => {
-      const targetX = mouse.active ? mouse.x : width * 0.5 + Math.cos(time * 0.0005) * width * 0.30
-      const targetY = mouse.active ? mouse.y : height * 0.5 + Math.sin(time * 0.0007) * height * 0.25
-
-      snake[0].x += (targetX - snake[0].x) * 0.07
-      snake[0].y += (targetY - snake[0].y) * 0.07
-
-      for (let i = 1; i < snake.length; i += 1) {
-        const prev = snake[i - 1]
-        const node = snake[i]
-        const dx = prev.x - node.x
-        const dy = prev.y - node.y
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1
-        const spacing = 11
-        node.x += (dx / dist) * (dist - spacing) * 0.48
-        node.y += (dy / dist) * (dist - spacing) * 0.48
-      }
-
-      ctx.save()
-      ctx.shadowBlur = 22
-      ctx.shadowColor = 'rgba(198,169,107,.36)'
-      ctx.lineCap = 'round'
-      ctx.lineJoin = 'round'
-
-      // Soft trail underneath
-      ctx.beginPath()
-      snake.forEach((node, i) => {
-        if (i === 0) ctx.moveTo(node.x, node.y)
-        else ctx.lineTo(node.x, node.y)
-      })
-      ctx.strokeStyle = 'rgba(198,169,107,.075)'
-      ctx.lineWidth = 32
-      ctx.stroke()
-
-      // Segmented body with tapering scales
-      for (let i = snake.length - 1; i >= 0; i -= 1) {
-        const node = snake[i]
-        const next = snake[Math.max(i - 1, 0)]
-        const angle = Math.atan2(next.y - node.y, next.x - node.x)
-        const taper = 1 - i / snake.length
-        const wave = Math.sin(time * 0.006 + i * 0.65) * 2.2
-        const bodyW = 4 + taper * 15
-        const bodyH = 3 + taper * 9
-
-        ctx.save()
-        ctx.translate(node.x, node.y + wave)
-        ctx.rotate(angle)
-        ctx.fillStyle = i % 2 === 0 ? 'rgba(198,169,107,.58)' : 'rgba(230,232,236,.42)'
-        ctx.strokeStyle = 'rgba(4,6,10,.45)'
-        ctx.lineWidth = 0.8
-        ctx.beginPath()
-        ctx.ellipse(0, 0, bodyW, bodyH, 0, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.stroke()
-
-        if (i % 4 === 0 && i > 2) {
-          ctx.fillStyle = 'rgba(154,215,255,.20)'
-          ctx.beginPath()
-          ctx.arc(-bodyW * 0.15, -bodyH * 0.25, Math.max(1, bodyH * 0.22), 0, Math.PI * 2)
-          ctx.fill()
-        }
-        ctx.restore()
-      }
-
-      // Head, eyes, tongue
-      const head = snake[0]
-      const neck = snake[1]
-      const headAngle = Math.atan2(head.y - neck.y, head.x - neck.x)
-      ctx.save()
-      ctx.translate(head.x, head.y)
-      ctx.rotate(headAngle)
-      ctx.shadowBlur = 18
-      ctx.shadowColor = 'rgba(198,169,107,.45)'
-      ctx.fillStyle = 'rgba(198,169,107,.96)'
-      ctx.strokeStyle = 'rgba(255,255,255,.22)'
-      ctx.lineWidth = 1
-      ctx.beginPath()
-      ctx.ellipse(0, 0, 18, 12, 0, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.stroke()
-
-      ctx.fillStyle = '#05070c'
-      ctx.beginPath(); ctx.arc(6, -4, 2.4, 0, Math.PI * 2); ctx.fill()
-      ctx.beginPath(); ctx.arc(6, 4, 2.4, 0, Math.PI * 2); ctx.fill()
-
-      const flick = Math.sin(time * 0.018) * 5
-      ctx.strokeStyle = 'rgba(232,131,147,.92)'
-      ctx.lineWidth = 1.4
-      ctx.beginPath()
-      ctx.moveTo(16, 0)
-      ctx.lineTo(28 + flick, -5)
-      ctx.moveTo(16, 0)
-      ctx.lineTo(28 + flick, 5)
-      ctx.stroke()
-      ctx.restore()
-
-      ctx.restore()
-    }
-
-    const tick = time => {
-      ctx.clearRect(0, 0, width, height)
-      ctx.globalCompositeOperation = 'source-over'
-      drawSnake(time)
-
-      for (const p of particles) {
-        let repelX = 0
-        let repelY = 0
-        let strongest = 0
-
-        for (let i = 0; i < snake.length; i += 3) {
-          const node = snake[i]
-          const dx = p.x - node.x
-          const dy = p.y - node.y
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1
-          const radius = 96 - i * 0.65
-          if (dist < radius) {
-            const force = (radius - dist) / radius
-            repelX += (dx / dist) * force * 8
-            repelY += (dy / dist) * force * 8
-            strongest = Math.max(strongest, force)
-          }
-        }
-
-        p.vx += (p.tx - p.x) * 0.018 + repelX
-        p.vy += (p.ty - p.y) * 0.018 + repelY
-        p.vx *= 0.78
-        p.vy *= 0.78
-        p.x += p.vx
-        p.y += p.vy
-
-        ctx.save()
-        ctx.translate(p.x, p.y)
-        ctx.rotate((p.vx + p.vy) * 0.015)
-        ctx.font = `700 ${p.size + strongest * 7}px Inter, system-ui, sans-serif`
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillStyle = p.tone > 0.78
-          ? `rgba(198,169,107,${0.34 + strongest * 0.48})`
-          : `rgba(230,232,236,${0.18 + strongest * 0.52})`
-        ctx.fillText(p.char, 0, 0)
-        ctx.restore()
-      }
-
-      raf = requestAnimationFrame(tick)
-    }
-
-    resize()
-    raf = requestAnimationFrame(tick)
-    window.addEventListener('resize', resize)
-    canvas.addEventListener('pointermove', pointerMove)
-    canvas.addEventListener('pointerleave', pointerLeave)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
-      canvas.removeEventListener('pointermove', pointerMove)
-      canvas.removeEventListener('pointerleave', pointerLeave)
-    }
-  }, [])
-
-  return <canvas ref={canvasRef} className="snake-canvas" aria-hidden="true" />
+      <div className="hero-center">
+        <p className="eyebrow">Zawwar Sami · Founder of Anteroom</p>
+        <h1>Beyond one room.</h1>
+        <p className="vision-line">I build across markets, restaurants, research, websites, and strange interfaces.</p>
+        <p className="lede">
+          Anteroom is one expression. The deeper work is turning messy ideas into systems people can actually use.
+        </p>
+        <div className="hero-actions">
+          <a className="button primary" href="#systems">Enter the Work</a>
+          <a className="button" href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">GitHub</a>
+          <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom</a>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 function ExclusionStatement() {
@@ -343,26 +150,10 @@ export default function App() {
         </div>
       </nav>
 
-      <section id="top" className="hero hero-snake">
-        <SnakeTextCanvas />
-        <div className="hero-overlay personal-overlay">
-          <p className="eyebrow">Zawwar Sami · Founder of Anteroom</p>
-          <h1>Beyond one room.</h1>
-          <p className="vision-line">Markets. Restaurants. Research. Websites. Strange interfaces.</p>
-          <p className="lede">
-            I build whatever the idea demands — tools that crawl, react, organize, and become useful.
-          </p>
-          <div className="hero-actions">
-            <a className="button primary" href="#systems">Enter the Work</a>
-            <a className="button" href="https://github.com/Zawwarsami16" target="_blank" rel="noreferrer">GitHub</a>
-            <a className="button" href="https://github.com/anteroom-studio" target="_blank" rel="noreferrer">Anteroom</a>
-          </div>
-        </div>
-      </section>
-
+      <ParallaxHero />
       <ExclusionStatement />
 
-      <section id="systems" className="systems-section">
+      <section id="systems" className="systems-section parallax-section">
         <div className="section-heading">
           <p className="eyebrow">Selected Work</p>
           <h2>Different domains. Same instinct.</h2>
@@ -373,7 +164,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="studio" className="studio-section beyond-section">
+      <section id="studio" className="studio-section beyond-section parallax-section">
         <div className="beyond-copy">
           <p className="eyebrow">Beyond the Studio</p>
           <h2>Anteroom is not the ceiling. It is one room.</h2>
@@ -383,7 +174,7 @@ export default function App() {
         </div>
         <div className="principles">
           {principles.map((item, index) => (
-            <div className="principle" key={item}>
+            <div className="principle parallax-card" key={item}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <p>{item}</p>
             </div>
@@ -391,7 +182,7 @@ export default function App() {
         </div>
       </section>
 
-      <section id="contact" className="contact-section">
+      <section id="contact" className="contact-section parallax-section">
         <p className="eyebrow">Contact</p>
         <h2>For serious builds, systems work, and product collaborations.</h2>
         <div className="contact-links">
